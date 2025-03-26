@@ -3,7 +3,11 @@ const fs = require("fs");
 
 const app = express();
 
-const port = 3000;
+if (!process.env.PORT) {
+    throw new Error("Please specify the port number for the HTTP server with the environment variable PORT.");
+}
+
+const PORT = process.env.PORT;
 
 app.get("/video", async (req, res) => {
     const videoPath = "../videos/SampleVideo_1280x720_1mb.mp4";
@@ -16,7 +20,6 @@ app.get("/video", async (req, res) => {
     fs.createReadStream(videoPath).pipe(res);
 });
 
-app.listen(port);
+app.listen(PORT);
 
-console.log(`Listening on port ${port}`);
-
+console.log(`Listening on port ${PORT}`);
