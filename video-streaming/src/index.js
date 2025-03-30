@@ -21,6 +21,6 @@ app.get("/video", async (req, res) => {
     fs.createReadStream(videoPath).pipe(res);
 });
 
-app.listen(PORT);
-
-console.log(`Listening on port ${PORT}`);
+app.listen(PORT, () => {
+    console.log(`Microservice online at port ${PORT}`);
+});
