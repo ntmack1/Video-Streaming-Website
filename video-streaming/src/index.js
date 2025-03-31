@@ -30,5 +30,5 @@ app.get("/video", (req, res) => {
 });
 
 app.listen(PORT, () => {
-    console.log(`Microservice online at port ${PORT}`);
+    console.log(`Microservice online`);
 });
