@@ -21,7 +21,7 @@ app.get("/video", (req, res) => {
             headers: req.headers
         },
         forwardResponse => {
-            res.writeHeader(forwardResponse.statusCode,forwardResponse.headers);
+            res.writeHead(forwardResponse.statusCode,forwardResponse.headers);
             forwardResponse.pipe(res);
         }
     );
