@@ -1,12 +1,11 @@
 services:
 
-  # db:
-  #   image: mongo:7.0.0
-  #   container_name: db
-
-  #   ports: 
-  #     - "4000:27017"
-  #   restart: always
+  db:
+    image: mongo:7.0.0
+    container_name: db
+    ports: 
+      - "4000:27017"
+    restart: always
 
   # azure-storage:
   #   image: azure-storage
@@ -33,7 +32,7 @@ services:
       - ./video-streaming/src:/usr/src/app/src:z
       - ./video-streaming/videos:/usr/src/app/videos:z
     ports:
-      - "4000:80"
+      - "4001:80"
     environment:
       - PORT=80
       - NODE_ENV=development
@@ -49,8 +48,12 @@ services:
       - /tmp/history/npm-cache:/root/.npm:z
       - ./history/src:/usr/src/app/src:z
     ports:
-      - "4001:80"
+      - "4002:80"
     environment:
       - PORT=80
+      - DBHOST=mongodb://db:27017
+      - DBNAME=history
       - NODE_ENV=development
+    depends_on:
+      - db
     restart: "no"
