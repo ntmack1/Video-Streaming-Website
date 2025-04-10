@@ -1,6 +1,6 @@
 const express = require("express");
 const mongodb = require("mongodb");
-
+const amqp = require("ampqlib");
 
 if (!process.env.PORT) {
     throw new Error("Please specify the port number for the HTTP server with the environment variable PORT.");
@@ -14,9 +14,14 @@ if (!process.env.DBNAME) {
     throw new Error("Please specify the name of the database using environment variable DBNAME");
 }
 
+if (!process.env.RABBIT) {
+    throw new Error("Please specify the name of the RabbitMQ host using environment variable RABBIT");
+}
+
 const PORT = process.env.PORT;
 const DBHOST = process.env.DBHOST;
 const DBNAME = process.env.DBNAME;
+const RABBIT = process.env.RABBIT;
 
 async function main() {
 
@@ -30,15 +35,27 @@ async function main() {
 
     const historyCollection = db.collection("history");
 
-    app.post("/viewed", async (req, res) => {
-        const videoPath = req.body.videoPath;
-        await historyCollection.insertOne({
-            videoPath: videoPath
+    const messagingConnection = await amqp.connect(RABBIT);
+
+    console.log("Connected to RabbitMQ.");
+
+    const messageChannel = await messagingConnection.createChannel();
+
+    await messageChannel.assertQueue("viewed", {})
+
+    console.log(`Created "viewed" queue.`);
+
+    await messageChannel.consume("viewed", async (msg) => {
+            
+        const parsedMsg = JSON.parse(msg.content.toString());
+        
+        await historyCollection.insertOne( {
+            videoPath: parsedMsg.videoPath
         });
 
-        console.log(`Added video ${videoPath} to history.`);
-        res.sendStatus(200);
-        
+        console.log("Acknowledging message was handled.");
+
+        messageChannel.ack(msg);
     });
 
     app.get("/history", async (req, res) => {
