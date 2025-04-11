@@ -1,6 +1,6 @@
 const express = require("express");
 const fs = require("fs");
-const http = require("http");
+const amqp = require('amqplib');
 // const http = require("http");
 // const mongodb = require("mongodb");
 
@@ -48,9 +48,9 @@ async function main() {
     const messageChannel = await messagingConnection.createChannel(); 
 
     function sendViewedMessage(messageChannel, videoPath) {
-        const msg = { videoPath: videoPath};
+        const msg = {videoPath: videoPath};
         const jsonMSG = JSON.stringify(msg);
-        messageChannel.publish("", "viewed", Buffer.from(jsonMsg));
+        messageChannel.publish("", "viewed", Buffer.from(jsonMSG));
     }
 
     const app = express();
