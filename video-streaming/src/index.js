@@ -24,6 +24,7 @@ if (!process.env.RABBIT) {
 //     throw new Error("Please specify the host databse for the video storage microservice in variable DBHOST.");
 // }
 
+
 // if (!process.env.DBNAME) {
 //     throw new Error("Please specify the database name for the video storage microservice in variable DBNAME.");
 // }
